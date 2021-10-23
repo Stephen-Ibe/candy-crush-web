@@ -32,17 +32,33 @@ function App() {
     }
   };
 
+  const checkForFourColumn = () => {
+    for (let i = 0; i < 39; i++) {
+      const columnOfFour = [i, i + width, i + width * 2, i + width * 3];
+      const decidedColor = currColorArrangement[i];
+
+      if (
+        columnOfFour.every(
+          (square) => currColorArrangement[square] === decidedColor
+        )
+      ) {
+        columnOfFour.forEach((square) => (currColorArrangement[square] = ""));
+      }
+    }
+  };
+
   useEffect(() => {
     createBoard();
   }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
+      checkForFourColumn();
       checkForThreeColumn();
       setCurrColorArrangement([...currColorArrangement]);
     }, 100);
     return () => clearInterval(timer);
-  }, [checkForThreeColumn, currColorArrangement]);
+  }, [checkForFourColumn, checkForThreeColumn, currColorArrangement]);
 
   console.log(currColorArrangement);
 
