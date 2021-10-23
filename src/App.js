@@ -23,11 +23,9 @@ function App() {
       const decidedColor = currColorArrangement[i];
 
       if (
-        columnOfThree.every(
-          (square) => currColorArrangement[square] === decidedColor
-        )
+        columnOfThree.every((s) => currColorArrangement[s] === decidedColor)
       ) {
-        columnOfThree.forEach((square) => (currColorArrangement[square] = ""));
+        columnOfThree.forEach((s) => (currColorArrangement[s] = ""));
       }
     }
   };
@@ -41,12 +39,8 @@ function App() {
       ];
 
       if (notValid.includes(i)) continue;
-      if (
-        rowOfThree.every(
-          (square) => currColorArrangement[square] === decidedColor
-        )
-      ) {
-        rowOfThree.forEach((square) => (currColorArrangement[square] = ""));
+      if (rowOfThree.every((s) => currColorArrangement[s] === decidedColor)) {
+        rowOfThree.forEach((s) => (currColorArrangement[s] = ""));
       }
     }
   };
@@ -84,27 +78,37 @@ function App() {
       ];
 
       if (notValid.includes(i)) continue;
-      if (
-        rowOfFour.every(
-          (square) => currColorArrangement[square] === decidedColor
-        )
-      ) {
-        rowOfFour.forEach((square) => (currColorArrangement[square] = ""));
+      if (rowOfFour.every((s) => currColorArrangement[s] === decidedColor)) {
+        rowOfFour.forEach((s) => (currColorArrangement[s] = ""));
       }
     }
   };
 
+  // Check for a Column of Four
   const checkForFourColumn = () => {
     for (let i = 0; i < 39; i++) {
       const columnOfFour = [i, i + width, i + width * 2, i + width * 3];
       const decidedColor = currColorArrangement[i];
 
-      if (
-        columnOfFour.every(
-          (square) => currColorArrangement[square] === decidedColor
-        )
-      ) {
-        columnOfFour.forEach((square) => (currColorArrangement[square] = ""));
+      if (columnOfFour.every((s) => currColorArrangement[s] === decidedColor)) {
+        columnOfFour.forEach((s) => (currColorArrangement[s] = ""));
+      }
+    }
+  };
+
+  const moveIntoSquareBelow = () => {
+    for (let i = 0; i < 64 - width; i++) {
+      const firstRow = [0, 1, 2, 3, 4, 5, 6, 7];
+      const isFirstRow = firstRow.includes(i);
+
+      if (isFirstRow && currColorArrangement[i] === "") {
+        let randomNumber = Math.floor(Math.random() * candyColors.length);
+        currColorArrangement[i] = candyColors[randomNumber];
+      }
+
+      if (currColorArrangement[i + width] === "") {
+        currColorArrangement[i + width] = currColorArrangement[i];
+        currColorArrangement[i] = "";
       }
     }
   };
@@ -119,13 +123,16 @@ function App() {
       checkForFourRow();
       checkForThreeColumn();
       checkForThreeRow();
+      moveIntoSquareBelow();
       setCurrColorArrangement([...currColorArrangement]);
     }, 100);
     return () => clearInterval(timer);
   }, [
     checkForFourColumn,
+    checkForFourRow,
     checkForThreeColumn,
     checkForThreeRow,
+    checkForFourRow,
     currColorArrangement,
   ]);
 
@@ -140,6 +147,9 @@ function App() {
               key={i}
               style={{ backgroundColor: candyColor }}
               // alt={candyColor}
+              data-id={i}
+              draggable={true}
+              onDragOver={(e) => e.preventDefault()}
             />
           ))}
       </div>
