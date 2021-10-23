@@ -1,7 +1,20 @@
 import { useState, useEffect } from "react";
+import BlueCandy from "./images/blue.png";
+import GreenCandy from "./images/green.png";
+import OrangeCandy from "./images/orange.png";
+import PurpleCandy from "./images/purple.png";
+import RedCandy from "./images/red.png";
+import YellowCandy from "./images/yellow.png";
 
 const width = 8;
-const candyColors = ["blue", "green", "orange", "purple", "red", "yellow"];
+const candyColors = [
+  BlueCandy,
+  GreenCandy,
+  OrangeCandy,
+  PurpleCandy,
+  RedCandy,
+  YellowCandy,
+];
 
 function App() {
   const [currColorArrangement, setCurrColorArrangement] = useState([]);
@@ -198,7 +211,7 @@ function App() {
           currColorArrangement.map((candyColor, i) => (
             <img
               key={i}
-              style={{ backgroundColor: candyColor }}
+              src={candyColor}
               alt={candyColor}
               data-id={i}
               draggable={true}
