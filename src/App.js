@@ -5,6 +5,7 @@ import OrangeCandy from "./images/orange.png";
 import PurpleCandy from "./images/purple.png";
 import RedCandy from "./images/red.png";
 import YellowCandy from "./images/yellow.png";
+import blank from "./images/blank.png";
 
 const width = 8;
 const candyColors = [
@@ -20,16 +21,27 @@ function App() {
   const [currColorArrangement, setCurrColorArrangement] = useState([]);
   const [squareBeingDragged, setSquareBeingDragged] = useState(null);
   const [squareBeingReplaced, setSquareBeingReplaced] = useState(null);
+  const [scoreDisplay, setScoreDisplay] = useState(0);
 
-  const createBoard = () => {
-    const randomColorArrangement = [];
-    for (let i = 0; i < width * width; i++) {
-      const randomColor =
-        candyColors[Math.floor(Math.random() * candyColors.length)];
-      randomColorArrangement.push(randomColor);
+  // Check for a Column of Four
+  const checkForFourColumn = () => {
+    for (let i = 0; i <= 39; i++) {
+      const columnOfFour = [i, i + width, i + width * 2, i + width * 3];
+      const decidedColor = currColorArrangement[i];
+      const isBlank = currColorArrangement[i] === blank;
+
+      if (
+        columnOfFour.every(
+          (square) => currColorArrangement[square] === decidedColor && !isBlank
+        )
+      ) {
+        setScoreDisplay((score) => score + 4);
+        columnOfFour.forEach(
+          (square) => (currColorArrangement[square] = blank)
+        );
+        return true;
+      }
     }
-
-    setCurrColorArrangement(randomColorArrangement);
   };
 
   const checkForFourRow = () => {
@@ -37,63 +49,40 @@ function App() {
       const rowOfFour = [i, i + 1, i + 2, i + 3];
       const decidedColor = currColorArrangement[i];
       const notValid = [
-        5,
-        ,
-        6,
-        7,
-        13,
-        14,
-        15,
-        21,
-        22,
-        23,
-        29,
-        30,
-        31,
-        37,
-        38,
-        39,
-        45,
-        46,
-        47,
-        53,
-        54,
-        55,
-        62,
-        63,
-        64,
+        5, 6, 7, 13, 14, 15, 21, 22, 23, 29, 30, 31, 37, 38, 39, 45, 46, 47, 53,
+        54, 55, 62, 63, 64,
       ];
+      const isBlank = currColorArrangement[i] === blank;
 
       if (notValid.includes(i)) continue;
-      if (rowOfFour.every((s) => currColorArrangement[s] === decidedColor)) {
-        rowOfFour.forEach((s) => (currColorArrangement[s] = ""));
-        return true;
-      }
-    }
-  };
 
-  // Check for a Column of Four
-  const checkForFourColumn = () => {
-    for (let i = 0; i < 39; i++) {
-      const columnOfFour = [i, i + width, i + width * 2, i + width * 3];
-      const decidedColor = currColorArrangement[i];
-
-      if (columnOfFour.every((s) => currColorArrangement[s] === decidedColor)) {
-        columnOfFour.forEach((s) => (currColorArrangement[s] = ""));
+      if (
+        rowOfFour.every(
+          (square) => currColorArrangement[square] === decidedColor && !isBlank
+        )
+      ) {
+        setScoreDisplay((score) => score + 4);
+        rowOfFour.forEach((square) => (currColorArrangement[square] = blank));
         return true;
       }
     }
   };
 
   const checkForThreeColumn = () => {
-    for (let i = 0; i < 47; i++) {
+    for (let i = 0; i <= 47; i++) {
       const columnOfThree = [i, i + width, i + width * 2];
       const decidedColor = currColorArrangement[i];
+      const isBlank = currColorArrangement[i] === blank;
 
       if (
-        columnOfThree.every((s) => currColorArrangement[s] === decidedColor)
+        columnOfThree.every(
+          (square) => currColorArrangement[square] === decidedColor && !isBlank
+        )
       ) {
-        columnOfThree.forEach((s) => (currColorArrangement[s] = ""));
+        setScoreDisplay((score) => score + 3);
+        columnOfThree.forEach(
+          (square) => (currColorArrangement[square] = blank)
+        );
         return true;
       }
     }
@@ -106,10 +95,17 @@ function App() {
       const notValid = [
         6, 7, 14, 15, 22, 23, 30, 31, 38, 39, 46, 47, 54, 55, 63, 64,
       ];
+      const isBlank = currColorArrangement[i] === blank;
 
       if (notValid.includes(i)) continue;
-      if (rowOfThree.every((s) => currColorArrangement[s] === decidedColor)) {
-        rowOfThree.forEach((s) => (currColorArrangement[s] = ""));
+
+      if (
+        rowOfThree.every(
+          (square) => currColorArrangement[square] === decidedColor && !isBlank
+        )
+      ) {
+        setScoreDisplay((score) => score + 3);
+        rowOfThree.forEach((square) => (currColorArrangement[square] = blank));
         return true;
       }
     }
@@ -120,14 +116,14 @@ function App() {
       const firstRow = [0, 1, 2, 3, 4, 5, 6, 7];
       const isFirstRow = firstRow.includes(i);
 
-      if (isFirstRow && currColorArrangement[i] === "") {
+      if (isFirstRow && currColorArrangement[i] === blank) {
         let randomNumber = Math.floor(Math.random() * candyColors.length);
         currColorArrangement[i] = candyColors[randomNumber];
       }
 
-      if (currColorArrangement[i + width] === "") {
+      if (currColorArrangement[i + width] === blank) {
         currColorArrangement[i + width] = currColorArrangement[i];
-        currColorArrangement[i] = "";
+        currColorArrangement[i] = blank;
       }
     }
   };
@@ -135,9 +131,11 @@ function App() {
   const dragStart = (e) => {
     setSquareBeingDragged(e.target);
   };
+
   const dragDrop = (e) => {
     setSquareBeingReplaced(e.target);
   };
+
   const dragEnd = (e) => {
     const squareBeingDraggedId = parseInt(
       squareBeingDragged.getAttribute("data-id")
@@ -147,9 +145,9 @@ function App() {
     );
 
     currColorArrangement[squareBeingReplacedId] =
-      squareBeingDragged.style.backgroundColor;
+      squareBeingDragged.getAttribute("src");
     currColorArrangement[squareBeingDraggedId] =
-      squareBeingReplaced.style.backgroundColor;
+      squareBeingReplaced.getAttribute("src");
 
     const validMoves = [
       squareBeingDraggedId - 1,
@@ -170,8 +168,8 @@ function App() {
       validMove &&
       (isRowOfThree || isRowOfFour || isColumnOfFour || isColumnOfThree)
     ) {
-      setSquareBeingReplaced(null);
       setSquareBeingDragged(null);
+      setSquareBeingReplaced(null);
     } else {
       currColorArrangement[squareBeingReplacedId] =
         squareBeingReplaced.style.backgroundColor;
@@ -179,6 +177,17 @@ function App() {
         squareBeingDragged.style.backgroundColor;
       setCurrColorArrangement([...currColorArrangement]);
     }
+  };
+
+  const createBoard = () => {
+    const randomColorArrangement = [];
+    for (let i = 0; i < width * width; i++) {
+      const randomColor =
+        candyColors[Math.floor(Math.random() * candyColors.length)];
+      randomColorArrangement.push(randomColor);
+    }
+
+    setCurrColorArrangement(randomColorArrangement);
   };
 
   useEffect(() => {
@@ -200,7 +209,7 @@ function App() {
     checkForFourRow,
     checkForThreeColumn,
     checkForThreeRow,
-    checkForFourRow,
+    moveIntoSquareBelow,
     currColorArrangement,
   ]);
 
