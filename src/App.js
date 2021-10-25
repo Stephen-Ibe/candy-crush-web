@@ -6,6 +6,7 @@ import PurpleCandy from "./images/purple.png";
 import RedCandy from "./images/red.png";
 import YellowCandy from "./images/yellow.png";
 import blank from "./images/blank.png";
+import Scoreboard from "./components/Scoreboard";
 
 const width = 8;
 const candyColors = [
@@ -172,9 +173,9 @@ function App() {
       setSquareBeingReplaced(null);
     } else {
       currColorArrangement[squareBeingReplacedId] =
-        squareBeingReplaced.style.backgroundColor;
+        squareBeingReplaced.getAttribute("src");
       currColorArrangement[squareBeingDraggedId] =
-        squareBeingDragged.style.backgroundColor;
+        squareBeingDragged.getAttribute("src");
       setCurrColorArrangement([...currColorArrangement]);
     }
   };
@@ -202,7 +203,7 @@ function App() {
       checkForThreeRow();
       moveIntoSquareBelow();
       setCurrColorArrangement([...currColorArrangement]);
-    }, 100);
+    }, 500);
     return () => clearInterval(timer);
   }, [
     checkForFourColumn,
@@ -233,6 +234,7 @@ function App() {
             />
           ))}
       </div>
+      <Scoreboard score={scoreDisplay} />
     </div>
   );
 }
