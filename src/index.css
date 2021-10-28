@@ -10,6 +10,7 @@ body {
 }
 .app {
   display: flex;
+  flex-direction: row;
   place-content: center;
   margin: 100px 0 0 0;
 }

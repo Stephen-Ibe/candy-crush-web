@@ -137,7 +137,7 @@ function App() {
     setSquareBeingReplaced(e.target);
   };
 
-  const dragEnd = (e) => {
+  const dragEnd = () => {
     const squareBeingDraggedId = parseInt(
       squareBeingDragged.getAttribute("data-id")
     );
@@ -203,7 +203,7 @@ function App() {
       checkForThreeRow();
       moveIntoSquareBelow();
       setCurrColorArrangement([...currColorArrangement]);
-    }, 500);
+    }, 300);
     return () => clearInterval(timer);
   }, [
     checkForFourColumn,
