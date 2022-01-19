@@ -1,10 +1,14 @@
+require("dotenv").config();
 const express = require("express");
 const axios = require("axios");
+const cors = require("cors");
 const app = express();
 
+app.use(cors());
+app.use(express.json());
+
 const PORT = 8000;
-const url =
-  "https://299393f4-948f-4977-a9bd-204af9457c56-europe-west1.apps.astra.datastax.com/api/rest/v2/namespaces/highscores/collections/scores?page-size=20";
+const url = process.env.URL;
 
 app.get("/", (req, res) => {
   res.json("Working...");
@@ -15,9 +19,29 @@ app.get("/scores", (req, res) => {
     method: "GET",
     headers: {
       Accepts: "application/json",
+      "X-Cassandra-Token": process.env.ASTRA_TOKEN,
+    },
+  };
+
+  axios(`${url}?page-size=20`, options)
+    .then((response) => res.status(200).json(response.data))
+    .catch((err) => res.status(500).json({ message: err }));
+});
+
+app.post("/addScore", (req, res) => {
+  const data = {
+    username: "David",
+    score: 10,
+  };
+  const options = {
+    method: "POST",
+    headers: {
+      Accepts: "application/json",
       "X-Cassandra-Token":
         "AstraCS:YrZsylCTRzhCGUagbBkXfJEK:6b4fce3cd12cef09dc202945fc4e75136462b9818dee0b558d2c8e19e63d71b9",
+      "Content-Type": "application/json",
     },
+    data,
   };
 
   axios(url, options)
