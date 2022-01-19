@@ -29,10 +29,7 @@ app.get("/scores", (req, res) => {
 });
 
 app.post("/addScore", (req, res) => {
-  const data = {
-    username: "David",
-    score: 10,
-  };
+  const data = req.body;
   const options = {
     method: "POST",
     headers: {
